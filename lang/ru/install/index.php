@@ -1,1 +1,5 @@
 <?php
+$MESS["DEMIROFL_CALENDAR_MODULE_NAME"] = "Календарь записей пользователя";
+$MESS["DEMIROFL_CALENDAR_DESCRIPTION"] = "";
+
+$MESS["DEMIROFL_CALENDAR_PARTNER_NAME"] = "Deminov Danil";

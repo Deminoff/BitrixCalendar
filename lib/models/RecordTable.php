@@ -3,7 +3,7 @@
 namespace Demirofl\Calendar\Models;
 
 use Bitrix\Main\Entity\DataManager;
-use Bitrix\Main\ORM\Fields\DatetimeField;
+use Bitrix\Main\ORM\Fields\DateField;
 use Bitrix\Main\ORM\Fields\EnumField;
 use Bitrix\Main\ORM\Fields\IntegerField;
 use Bitrix\Main\ORM\Fields\TextField;
@@ -29,7 +29,7 @@ class RecordTable extends DataManager
                     "title" => "ID"
                 ]
             ),
-            new DatetimeField(
+            new DateField(
                 "DATE",
                 [
                     "required" => true,

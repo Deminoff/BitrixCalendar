@@ -55,12 +55,9 @@ class demirofl_calendar extends CModule
 
     public function InstallFiles()
     {
-        CopyDirFiles(
-            __DIR__ . "/components",
-            $_SERVER["DOCUMENT_ROOT"] . "/local/components/" . self::PartnerName,
-            true,
-            true,
-        );
+        CopyDirFiles(__DIR__ . '/css/', $_SERVER['DOCUMENT_ROOT'] . '/bitrix/css/' . self::PartnerName . '.' . self::SolutionName, true, true);
+        CopyDirFiles(__DIR__ . '/js/', $_SERVER['DOCUMENT_ROOT'] . '/bitrix/js/' . self::PartnerName . '.' . self::SolutionName, true, true);
+        CopyDirFiles(__DIR__ . "/components/", $_SERVER["DOCUMENT_ROOT"] . "/local/components/" . self::PartnerName, true, true,);
     }
 
 
@@ -84,8 +81,8 @@ class demirofl_calendar extends CModule
 
     public function UnInstallFiles()
     {
-        DeleteDirFilesEx(
-            "/local/components/" . self::PartnerName . "/" . self::SolutionName . "/",
-        );
+        DeleteDirFilesEx("/local/components/" . self::PartnerName . "/" . self::SolutionName . "/");
+        DeleteDirFilesEx("/bitrix/js/" . self::PartnerName . "." . self::SolutionName);
+        DeleteDirFilesEx("/bitrix/css/" . self::PartnerName . "." . self::SolutionName);
     }
 }

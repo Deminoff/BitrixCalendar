@@ -3,13 +3,15 @@
 namespace Demirofl\Calendar\Models;
 
 use Bitrix\Main\Entity\DataManager;
-use Bitrix\Main\ORM\Fields\DateField;
+use Bitrix\Main\Entity\StringField;
+use Bitrix\Main\ORM\Fields\DatetimeField;
 use Bitrix\Main\ORM\Fields\EnumField;
 use Bitrix\Main\ORM\Fields\IntegerField;
 use Bitrix\Main\ORM\Fields\TextField;
 
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
+use Bitrix\Main\Type\DateTime;
 
 class RecordTable extends DataManager
 {
@@ -29,22 +31,34 @@ class RecordTable extends DataManager
                     "title" => "ID"
                 ]
             ),
-            new DateField(
-                "DATE",
+            new StringField(
+                "NAME",
+                [
+                    "required" => true,
+                ]
+            ),
+            new DatetimeField(
+                "DATE_FROM",
+                [
+                    "required" => true,
+                ]
+            ),
+            new DatetimeField(
+                "DATE_TO",
                 [
                     "required" => true,
                 ]
             ),
             new TextField(
-                "DESCRIPTION",
+                "DESCRIPTION"
             ),
             new EnumField(
                 "STATUS",
                 [
                     "values" => [
                         "пойду",
-                        "под вопросом",
-                        "не пойду"
+                        "не пойду",
+                        "под вопросом"
                     ],
                     "required" => true
                 ]

@@ -13,6 +13,12 @@ class Ajax extends Controller
         return [
             "getRecords" => [
                 "prefilters" => []
+            ],
+            "addRecordAction" => [
+                "prefilters" => []
+            ],
+            "updateRecordAction" => [
+                "prefilters" => []
             ]
         ];
     }

@@ -1,61 +1,70 @@
-function init() {
-    let elCalendar = document.getElementById('calendar');
-    window.calendar = new FullCalendar.Calendar(elCalendar, {
-        headerToolbar: {
-            left: 'timeGridDay,timeGridWeek,dayGridMonth',
-            center: 'title',
-        },
-        dateClick: function(info) {
-            addRecord(info.date)
-        }
-    })
-
-    window.calendar.render()
-
-    let currentRange = getCurrentRange()
-
-    getRecords(currentRange).then(res => {
-        res.data.forEach(function(record) {
-            window.calendar.addEvent(record)
-        })
-    })
-
-    elCalendar.addEventListener("click", function(event){
-        if(event.target.classList.contains("fc-button") || event.target.parentNode.classList.contains("fc-button")){
-            window.calendar.removeAllEvents();
-            getRecords(getCurrentRange()).then(res => {
-                res.data.forEach(function(record) {
-                    window.calendar.addEvent(record)
-                })
-            })
-        }
-    })
-}
-
-function getCurrentRange() {
-    let allDates = document.querySelectorAll("[data-date]");
-
-    return {
-        startRange: allDates[0].dataset.date,
-        endRange: allDates[allDates.length-1].dataset.date
-    }
-}
-
-function getRecords(range) {
+const getRecords = (filter) => {
     return new Promise((resolve, reject) => {
-        resolve(BX.ajax.runComponentAction('demirofl:calendar', 'getRecords', {
-            mode:'ajax',
+        resolve(BX.ajax.runAction('demirofl:calendar.api.ajax.getRecords', {
             data: {
-                dateBegin: range.startRange,
-                dateEnd: range.endRange
+                filter
             }
         }))
     })
 }
 
-function addRecord(date) {
+$(document).ready(async function() {
+
+    /* Первичная инициализация календаря */
+    let elCalendar = $("#calendar")[0]
+    window.calendar = new FullCalendar.Calendar(elCalendar, {
+        headerToolbar: {
+            left: 'timeGridDay,timeGridWeek,dayGridMonth', center: 'title',
+        },
+    })
+    window.calendar.render()
+    updateCurrentRange()
+    /* //Первичная инициализация календаря */
+
+    /* Первичная инициализация записей */
+
+    pushRecords()
+
+    /* //Первичная инициализация записей */
+
+
+    /* Слушатель изменения представления календаря */
+    elCalendar.addEventListener("click", function(event) {
+        if(event.target.classList.contains("fc-button")
+            || event.target.parentNode.classList.contains("fc-button")){
+            updateCurrentRange()
+            pushRecords()
+        }
+    })
+    /* //Слушатель изменения представления календаря */
+})
+
+function getFormatedDate(date) {
+    date = new Date(date)
+    return date.toLocaleDateString()
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    init()
-});
+function updateCurrentRange() {
+    let allDates = document.querySelectorAll("#calendar [data-date]");
+
+    window.currentRange = {
+        startRange: getFormatedDate(allDates[0].dataset.date), endRange: getFormatedDate(allDates[allDates.length - 1].dataset.date)
+    }
+}
+
+async function pushRecords() {
+    window.calendar.removeAllEvents()
+    let events = await getRecords({">=DATE": window.currentRange.startRange, "<=DATE": window.currentRange.endRange})
+    if(events.data.length > 0) {
+        events.data.forEach(function(event) {
+            window.calendar.addEvent({
+                id: event.ID,
+                start: event.DATE_FROM,
+                end: event.DATE_TO,
+                title: event.NAME,
+                description: event.DESCRIPTION,
+                status: event.STATUS
+            })
+        })
+    }
+}

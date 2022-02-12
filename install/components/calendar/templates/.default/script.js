@@ -18,18 +18,31 @@ const addRecord = (record) => {
     })
 }
 
+const updateRecord = (id, record) => {
+    return new Promise((resolve, reject) => {
+        resolve(BX.ajax.runAction("demirofl:calendar.api.ajax.updateRecord", {
+            data: {
+                id: id,
+                record: record
+            }
+        }))
+    })
+}
+
 const pushRecords = async (filter) => {
     window.calendar.removeAllEvents()
     let events = await getRecords({
-        ">=DATE_FROM": window.currentRange.startRange,
-        "<=DATE_TO": window.currentRange.endRange
+        ">=DATE": window.currentRange.startRange,
+        "<=DATE": window.currentRange.endRange
     })
     if (events.data.length > 0) {
         events.data.forEach(function (event) {
             window.calendar.addEvent({
                 id: event.ID,
-                start: getFormatedDate(event.DATE_FROM, "calendar"),
-                end: getFormatedDate(event.DATE_TO, "calendar"),
+                //Вот здесь небольшой костыль, чтобы задача занимала 100% дня
+                //Можно использовать allDay, но тогда отображается некрасиво
+                start: getFormatedDate(event.DATE, "calendar").setHours(0),
+                end: getFormatedDate(event.DATE, "calendar").setHours(24),
                 title: event.NAME,
                 description: event.DESCRIPTION,
                 status: event.STATUS
@@ -60,6 +73,57 @@ function updateCurrentRange() {
     }
 }
 
+const initAddRecordModal = (info) => {
+    let addRecordFormEl = $("#add-record_modal")
+    addRecordFormEl.jqm().jqmShow()
+
+    $("#add-record").on("click", function(event) {
+        let name = $("#add-record_NAME")
+        let date = getFormatedDate(info.date, "bitrix")
+        let description = $("#add-record_DESCRIPTION")
+        let status = $("#add-record_STATUS")
+        event.preventDefault()
+        addRecord({
+            "NAME": name.val() ? name.val() : name.attr("placeholder"),
+            "DATE": date,
+            "DESCRIPTION": description.val() ? description.val() : description.attr("placeholder"),
+            "STATUS": status.val()
+        }).then(res => {
+            pushRecords()
+            addRecordFormEl.jqmHide()
+            name.val("")
+            description.val("")
+            status.val("пойду")
+            $("#add-record").off("click")
+        })
+    })
+}
+
+const initUpdateRecordModal = (info) => {
+    let updateRecordFormEl = $("#update-record_modal")
+    updateRecordFormEl.jqm().jqmShow()
+    $("#update-record_NAME").val(info.event.title)
+    $("#update-record_DESCRIPTION").val(info.event.extendedProps.description)
+    $("#update-record_STATUS").val(info.event.extendedProps.status)
+    $("#update-record").on("click", function(event) {
+        let name = $("#update-record_NAME")
+        let description = $("#update-record_DESCRIPTION")
+        let status = $("#update-record_STATUS")
+        event.preventDefault()
+        updateRecord(info.event.id, {
+            "NAME": name.val() ? name.val() : name.attr("placeholder"),
+            "DESCRIPTION": description.val() ? description.val() : description.attr("placeholder"),
+            "STATUS": status.val()
+        }).then(res => {
+            pushRecords()
+            updateRecordFormEl.jqmHide()
+            name.val("")
+            description.val("")
+            status.val("пойду")
+            $("#update-record").off("click")
+        })
+    })
+}
 
 $(document).ready(async function () {
     /* Первичная инициализация календаря */
@@ -68,6 +132,12 @@ $(document).ready(async function () {
         headerToolbar: {
             left: 'timeGridDay,timeGridWeek,dayGridMonth', center: 'title',
         },
+        dateClick(info) {
+            initAddRecordModal(info)
+        },
+        eventClick(info) {
+            initUpdateRecordModal(info)
+        }
     })
     window.calendar.render()
     updateCurrentRange()

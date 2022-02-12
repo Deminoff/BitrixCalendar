@@ -35,22 +35,21 @@ class RecordTable extends DataManager
                 "NAME",
                 [
                     "required" => true,
+                    "title" => "Название"
                 ]
             ),
             new DatetimeField(
-                "DATE_FROM",
+                "DATE",
                 [
                     "required" => true,
-                ]
-            ),
-            new DatetimeField(
-                "DATE_TO",
-                [
-                    "required" => true,
+                    "title" => "Дата"
                 ]
             ),
             new TextField(
-                "DESCRIPTION"
+                "DESCRIPTION",
+                [
+                    "title" => "Описание"
+                ]
             ),
             new EnumField(
                 "STATUS",
@@ -60,7 +59,8 @@ class RecordTable extends DataManager
                         "не пойду",
                         "под вопросом"
                     ],
-                    "required" => true
+                    "required" => true,
+                    "title" => "Статус"
                 ]
             ),
             new IntegerField(

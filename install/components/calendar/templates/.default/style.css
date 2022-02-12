@@ -1,0 +1,37 @@
+#calendar td{
+    cursor: pointer;
+}
+
+.form-header{
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.jqmWindow{
+    width: 300px!important;
+    left: 50%!important;
+    margin-left: 0!important;
+    transform: translateX(-50%);
+}
+
+.jqmWindow .form-group{
+    padding: 10px 0;
+}
+
+.jqmWindow .form-group input,
+.jqmWindow .form-group textarea{
+    width: 80%;
+}
+
+
+.jqmWindow label{
+    display: block;
+    margin-bottom: 5px;
+
+}
+
+.jqmClose{
+    cursor: pointer;
+    right: 10px;
+    position: absolute;
+}

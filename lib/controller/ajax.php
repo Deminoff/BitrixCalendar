@@ -28,7 +28,6 @@ class Ajax extends Controller
         return $userId;
     }
 
-    //TODO: не работает фильтр на один день, нужно потом исправить
     public function getRecordsAction($filter = []): array
     {
         $filter = array_merge($filter, ["USER_ID" => self::getUserId()]);
@@ -52,11 +51,23 @@ class Ajax extends Controller
     public function addRecordAction($record) {
         $result = RecordTable::add([
             "NAME" => $record["NAME"],
-            "DATE_FROM" => new DateTime($record["DATE_FROM"], "Y-m-d H:i:s"),
-            "DATE_TO" => new DateTime($record["DATE_TO"], "Y-m-d H:i:s"),
+            "DATE" => new DateTime($record["DATE"], "d.m.Y"),
             "DESCRIPTION" => $record["DESCRIPTION"],
             "STATUS" => $record["STATUS"],
             "USER_ID" => self::getUserId()
+        ]);
+
+        if ($result->isSuccess())
+        {
+            return $result->getId();
+        }
+    }
+
+    public function updateRecordAction($id, $record) {
+        $result = RecordTable::update($id,[
+            "NAME" => $record["NAME"],
+            "DESCRIPTION" => $record["DESCRIPTION"],
+            "STATUS" => $record["STATUS"],
         ]);
 
         if ($result->isSuccess())
